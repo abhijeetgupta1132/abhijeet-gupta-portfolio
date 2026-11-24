@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" preserveAspectRatio="none">
+<defs>
+  <linearGradient id="sky" x2=".8" y2="1" gradientUnits="objectBoundingBox"><stop stop-color="#34504c"/><stop offset=".48" stop-color="#333c3a"/><stop offset="1" stop-color="#1a1020"/></linearGradient>
+  <filter id="cloud" x="-35%" y="-65%" width="170%" height="240%">
+    <feTurbulence type="fractalNoise" baseFrequency=".007 .012" numOctaves="4" seed="16" result="noise"/>
+    <feColorMatrix in="noise" type="matrix" values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  1.6 0 0 0 -.23" result="density"/>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="245" xChannelSelector="R" yChannelSelector="G" result="swirl"/>
+    <feGaussianBlur in="swirl" stdDeviation="5" result="soft"/>
+    <feTurbulence type="fractalNoise" baseFrequency=".009" numOctaves="5" seed="7" result="detail"/>
+    <feDisplacementMap in="detail" in2="noise" scale="145" xChannelSelector="R" yChannelSelector="B" result="wisps"/>
+    <feColorMatrix in="wisps" type="matrix" values="2.4 0 0 0 -.48  2.4 0 0 0 -.48  2.4 0 0 0 -.48  0 0 0 0 1" result="light"/>
+    <feComposite in="soft" in2="light" operator="arithmetic" k1="1"/>
+  </filter>
+</defs>
+<path fill="url(#sky)" d="M0 0h1200v750H0z"/>
+<g filter="url(#cloud)" fill="none">
+<path d="M-80 610 Q230 840 520 585 T910 230 T1300 155" stroke="#800719" stroke-width="310"/>
+<path d="M-80 660 Q250 835 510 625 T850 260 Q870 65 1030 170 T1310 150" stroke="#e00b28" stroke-width="150"/>
+<path d="M110 740 Q300 840 570 585 T870 285 Q900 145 1010 200 T1310 180" stroke="#ff1e35" stroke-width="65"/>
+</g></svg>

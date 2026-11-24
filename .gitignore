@@ -1,0 +1,10 @@
+node_modules/
+node_modules.partial/
+.next/
+out/
+.env*
+!.env.example
+*.log
+test-results/
+.vercel/
+*.tsbuildinfo
