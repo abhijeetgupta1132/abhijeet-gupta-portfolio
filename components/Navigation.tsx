@@ -1,12 +1,25 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu, X } from "lucide-react";
 import { navItems } from "@/data/portfolio";
 
 export function Navigation() {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("home");
+  const toggle = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function close(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setOpen(false);
+        toggle.current?.focus();
+      }
+    }
+    document.addEventListener("keydown", close);
+    return () => document.removeEventListener("keydown", close);
+  }, [open]);
 
   useEffect(() => {
     const sections = ["home", ...navItems].map(id => document.getElementById(id)).filter(Boolean) as HTMLElement[];
@@ -19,7 +32,7 @@ export function Navigation() {
     <a className="skip-link" href="#main">Skip to content</a>
     <nav className="nav-shell" aria-label="Primary navigation">
       <a className="brand" href="#home" aria-label="Abhijeet Gupta, home"><span>ABHIJEET</span></a>
-      <button className="menu-button" type="button" aria-expanded={open} aria-controls="mobile-nav" onClick={() => setOpen(value => !value)}>{open ? <X /> : <Menu />}<span className="sr-only">Toggle navigation</span></button>
+      <button ref={toggle} className="menu-button" type="button" aria-expanded={open} aria-controls="mobile-nav" onClick={() => setOpen(value => !value)}>{open ? <X /> : <Menu />}<span className="sr-only">Toggle navigation</span></button>
       <div id="mobile-nav" className={`nav-links ${open ? "is-open" : ""}`}>
         {navItems.map((item, index) => <a key={item} href={`#${item}`} aria-current={active === item ? "location" : undefined} onClick={() => setOpen(false)}><span>0{index + 1}</span>{item}</a>)}
         <a className="resume-link" href="#contact" onClick={() => setOpen(false)}>Let’s talk</a>

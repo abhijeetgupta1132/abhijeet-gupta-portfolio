@@ -8,3 +8,4 @@ out/
 test-results/
 .vercel/
 *.tsbuildinfo
+.taste-skill/

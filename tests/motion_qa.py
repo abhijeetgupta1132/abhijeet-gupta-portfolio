@@ -1,11 +1,14 @@
 from pathlib import Path
+import os
 from playwright.sync_api import sync_playwright
 
 shots = Path(__file__).resolve().parents[1] / "test-results"
+shots.mkdir(exist_ok=True)
+url = os.environ.get("PORTFOLIO_URL", "http://localhost:3000")
 with sync_playwright() as p:
     browser = p.chromium.launch()
-    page = browser.new_page(viewport={"width": 1280, "height": 720}, reduced_motion="reduce")
-    page.goto("http://127.0.0.1:52002/", wait_until="domcontentloaded")
+    page = browser.new_page(viewport={"width": 1280, "height": 720})
+    page.goto(url, wait_until="networkidle")
     assert page.locator(".film-intro").count() == 0
     assert page.get_by_role("heading", level=1).is_visible()
     page.locator(".hero-photo").first.evaluate("image => image.decode()")
@@ -23,9 +26,9 @@ with sync_playwright() as p:
     assert transform(".shard-0") != before
     top = page.locator("#projects").evaluate("el => el.offsetTop")
     scroll_to(top - 200)
-    before = transform(".reference-project")
+    # Project navigation must never leave cards scaled down or transparent.
     scroll_to(top + 480)
-    assert transform(".reference-project") != before
+    assert transform(".reference-project") == "none"
     page.screenshot(path=shots / "film-projects.png")
     page.locator(".reference-project summary").first.click()
     assert page.locator(".reference-project").first.get_attribute("open") is not None
@@ -34,7 +37,9 @@ with sync_playwright() as p:
     assert page.get_by_role("button", name="Pause motion").count() == 0
     assert page.get_by_role("button", name="Play motion").count() == 0
     assert page.locator(".atmosphere i").first.evaluate("el => el.getAnimations().length") > 0
-    page.goto("http://127.0.0.1:52002/#projects", wait_until="networkidle")
+    page.close()
+    page = browser.new_page(viewport={"width": 1280, "height": 720})
+    page.goto(url + "/#projects", wait_until="networkidle")
     cards = page.locator("#projects .reference-project")
     assert cards.evaluate_all("""cards => cards.every(card =>
       getComputedStyle(card).opacity === '1' &&
